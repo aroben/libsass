@@ -29,7 +29,7 @@ namespace Sass {
 
     if (paths_str) {
       const char* beg = paths_str;
-      const char* end = Prelexer::find_first<PATH_SEP>(beg);
+      const char* end = Prelexer::find_first_char<PATH_SEP>(beg);
 
       while (end) {
         string path(beg, end - beg);
@@ -38,7 +38,7 @@ namespace Sass {
           include_paths.push_back(path);
         }
         beg = end + 1;
-        end = Prelexer::find_first<PATH_SEP>(beg);
+        end = Prelexer::find_first_char<PATH_SEP>(beg);
       }
 
       string path(beg);

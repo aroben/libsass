@@ -8,7 +8,7 @@ namespace Sass {
 
     // Match a single character literal.
     template <char pre>
-    const char* exactly(const char* src) {
+    const char* exactly_char(const char* src) {
       return *src == pre ? src + 1 : 0;
     }
   
@@ -60,13 +60,13 @@ namespace Sass {
     
     // Match a sequence of characters delimited by the supplied chars.
     template <char beg, char end, bool esc>
-    const char* delimited_by(const char* src) {
-      src = exactly<beg>(src);
+    const char* delimited_by_char(const char* src) {
+      src = exactly_char<beg>(src);
       if (!src) return 0;
       const char* stop;
       while (1) {
         if (!*src) return 0;
-        stop = exactly<end>(src);
+        stop = exactly_char<end>(src);
         if (stop && (!esc || *(src - 1) != '\\')) return stop;
         src = stop ? stop : src + 1;
       }
@@ -407,7 +407,7 @@ namespace Sass {
     
     // Utility functions for finding and counting characters in a string.
     template<char c>
-    const char* find_first(const char* src) {
+    const char* find_first_char(const char* src) {
       while (*src && *src != c) ++src;
       return *src ? src : 0;
     }
@@ -425,7 +425,7 @@ namespace Sass {
       return 0;
     }
     template <char c>
-    unsigned int count_interval(const char* beg, const char* end) {
+    unsigned int count_interval_char(const char* beg, const char* end) {
       unsigned int counter = 0;
       while (beg < end && *beg) {
         if (*beg == c) ++counter;

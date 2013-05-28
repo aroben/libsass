@@ -51,10 +51,10 @@ namespace Sass {
     }
     // Match double- and single-quoted strings.
     const char* double_quoted_string(const char* src) {
-      return delimited_by<'"', '"', true>(src);
+      return delimited_by_char<'"', '"', true>(src);
     }
     const char* single_quoted_string(const char* src) {
-      return delimited_by<'\'', '\'', true>(src);
+      return delimited_by_char<'\'', '\'', true>(src);
     }
     const char* string_constant(const char* src) {
       return alternatives<double_quoted_string, single_quoted_string>(src);
@@ -78,20 +78,20 @@ namespace Sass {
     
     // Match CSS identifiers.
     const char* identifier(const char* src) {
-      return sequence< optional< exactly<'-'> >,
-                       alternatives< alpha, exactly<'_'> >,
+      return sequence< optional< exactly_char<'-'> >,
+                       alternatives< alpha, exactly_char<'_'> >,
                        zero_plus< alternatives< alnum,
-                                                exactly<'-'>,
-                                                exactly<'_'> > > >(src);
+                                                exactly_char<'-'>,
+                                                exactly_char<'_'> > > >(src);
     }
     
     
     // Match interpolant schemas
     const char* identifier_schema(const char* src) {
       // follows this pattern: (x*ix*)+ ... well, not quite
-      return one_plus< sequence< zero_plus< alternatives< identifier, exactly<'-'> > >,
+      return one_plus< sequence< zero_plus< alternatives< identifier, exactly_char<'-'> > >,
                                  interpolant,
-                                 zero_plus< alternatives< identifier, number, exactly<'-'> > > > >(src);
+                                 zero_plus< alternatives< identifier, number, exactly_char<'-'> > > > >(src);
     }
     const char* value_schema(const char* src) {
       // follows this pattern: ([xyz]*i[xyz]*)+
@@ -100,18 +100,18 @@ namespace Sass {
                                  zero_plus< alternatives< identifier, percentage, dimension, hex, number, string_constant > > > >(src);
     }
     const char* filename_schema(const char* src) {
-      return one_plus< sequence< zero_plus< alternatives< identifier, number, exactly<'.'>, exactly<'/'> > >,
+      return one_plus< sequence< zero_plus< alternatives< identifier, number, exactly_char<'.'>, exactly_char<'/'> > >,
                                  interpolant,
-                                 zero_plus< alternatives< identifier, number, exactly<'.'>, exactly<'/'> > > > >(src);
+                                 zero_plus< alternatives< identifier, number, exactly_char<'.'>, exactly_char<'/'> > > > >(src);
     }
 
     const char* filename(const char* src) {
-      return one_plus< alternatives< identifier, number, exactly<'.'> > >(src);
+      return one_plus< alternatives< identifier, number, exactly_char<'.'> > >(src);
     }
     
     // Match CSS '@' keywords.
     const char* at_keyword(const char* src) {
-      return sequence<exactly<'@'>, identifier>(src);
+      return sequence<exactly_char<'@'>, identifier>(src);
     }
 
     const char* import(const char* src) {
@@ -190,8 +190,8 @@ namespace Sass {
     
     const char* name(const char* src) {
       return one_plus< alternatives< alnum,
-                                     exactly<'-'>,
-                                     exactly<'_'> > >(src);
+                                     exactly_char<'-'>,
+                                     exactly_char<'_'> > >(src);
     }
 
     const char* warn(const char* src) {
@@ -199,27 +199,27 @@ namespace Sass {
     }
 
     const char* directive(const char* src) {
-      return sequence< exactly<'@'>, identifier >(src);
+      return sequence< exactly_char<'@'>, identifier >(src);
     }
 
     // Match CSS type selectors
     const char* namespace_prefix(const char* src) {
-      return sequence< optional< alternatives< identifier, exactly<'*'> > >,
-                       exactly<'|'> >(src);
+      return sequence< optional< alternatives< identifier, exactly_char<'*'> > >,
+                       exactly_char<'|'> >(src);
     }
     const char* type_selector(const char* src) {
       return sequence< optional<namespace_prefix>, identifier>(src);
     }
     const char* universal(const char* src) {
-      return sequence< optional<namespace_prefix>, exactly<'*'> >(src);
+      return sequence< optional<namespace_prefix>, exactly_char<'*'> >(src);
     }
     // Match CSS id names.
     const char* id_name(const char* src) {
-      return sequence<exactly<'#'>, name>(src);
+      return sequence<exactly_char<'#'>, name>(src);
     }
     // Match CSS class names.
     const char* class_name(const char* src) {
-      return sequence<exactly<'.'>, identifier>(src);
+      return sequence<exactly_char<'.'>, identifier>(src);
     }
     // Match CSS numeric constants.
 
@@ -228,7 +228,7 @@ namespace Sass {
     }
     const char* unsigned_number(const char* src) {
       return alternatives<sequence< zero_plus<digits>,
-                                    exactly<'.'>,
+                                    exactly_char<'.'>,
                                     one_plus<digits> >,
                           digits>(src);
     }
@@ -242,12 +242,12 @@ namespace Sass {
     const char* binomial(const char* src) {
       return sequence< optional<sign>,
                        optional<digits>,
-                       exactly<'n'>, optional_spaces,
+                       exactly_char<'n'>, optional_spaces,
                        sign, optional_spaces,
                        digits >(src);
     }
     const char* percentage(const char* src) {
-      return sequence< number, exactly<'%'> >(src);
+      return sequence< number, exactly_char<'%'> >(src);
     }
 
     const char* em(const char* src) {
@@ -257,7 +257,7 @@ namespace Sass {
       return sequence<number, identifier>(src);
     }
     const char* hex(const char* src) {
-      const char* p = sequence< exactly<'#'>, one_plus<xdigit> >(src);
+      const char* p = sequence< exactly_char<'#'>, one_plus<xdigit> >(src);
       int len = p - src;
       return (len != 4 && len != 7) ? 0 : p;
     }
@@ -276,36 +276,36 @@ namespace Sass {
                        optional<spaces>,
                        string_constant,
                        optional<spaces>,
-                       exactly<')'> >(src);
+                       exactly_char<')'> >(src);
     }
     const char* url_value(const char* src) {
-      return sequence< optional< sequence< identifier, exactly<':'> > >, // optional protocol
-                       one_plus< sequence< zero_plus< exactly<'/'> >, filename > >, // one or more folders and/or trailing filename
-                       optional< exactly<'/'> > >(src);
+      return sequence< optional< sequence< identifier, exactly_char<':'> > >, // optional protocol
+                       one_plus< sequence< zero_plus< exactly_char<'/'> >, filename > >, // one or more folders and/or trailing filename
+                       optional< exactly_char<'/'> > >(src);
     }
     const char* url_schema(const char* src) {
-      return sequence< optional< sequence< identifier, exactly<':'> > >, // optional protocol
+      return sequence< optional< sequence< identifier, exactly_char<':'> > >, // optional protocol
                        filename_schema >(src); // optional trailing slash
     }
     // Match CSS "!important" keyword.
     const char* important(const char* src) {
-      return sequence< exactly<'!'>,
+      return sequence< exactly_char<'!'>,
                        spaces_and_comments,
                        exactly<important_kwd> >(src);
     }
     // Match Sass "!default" keyword.
     const char* default_flag(const char* src) {
-      return sequence< exactly<'!'>,
+      return sequence< exactly_char<'!'>,
                        spaces_and_comments,
                        exactly<default_kwd> >(src);
     }
     // Match CSS pseudo-class/element prefixes.
     const char* pseudo_prefix(const char* src) {
-      return sequence< exactly<':'>, optional< exactly<':'> > >(src);
+      return sequence< exactly_char<':'>, optional< exactly_char<':'> > >(src);
     }
     // Match CSS function call openers.
     const char* functional(const char* src) {
-      return sequence< alternatives< identifier_schema, identifier >, exactly<'('> >(src);
+      return sequence< alternatives< identifier_schema, identifier >, exactly_char<'('> >(src);
     }
     // Match the CSS negation pseudo-class.
     const char* pseudo_not(const char* src) {
@@ -319,7 +319,7 @@ namespace Sass {
       return exactly<odd_kwd>(src);
     }
     // Match CSS attribute-matching operators.
-    const char* exact_match(const char* src) { return exactly<'='>(src); }
+    const char* exact_match(const char* src) { return exactly_char<'='>(src); }
     const char* class_match(const char* src) { return exactly<tilde_equal>(src); }
     const char* dash_match(const char* src) { return exactly<pipe_equal>(src); }
     const char* prefix_match(const char* src) { return exactly<caret_equal>(src); }
@@ -327,21 +327,21 @@ namespace Sass {
     const char* substring_match(const char* src) { return exactly<star_equal>(src); }
     // Match CSS combinators.
     const char* adjacent_to(const char* src) {
-      return sequence< optional_spaces, exactly<'+'> >(src);
+      return sequence< optional_spaces, exactly_char<'+'> >(src);
     }
     const char* precedes(const char* src) {
-      return sequence< optional_spaces, exactly<'~'> >(src);
+      return sequence< optional_spaces, exactly_char<'~'> >(src);
     }
     const char* parent_of(const char* src) {
-      return sequence< optional_spaces, exactly<'>'> >(src);
+      return sequence< optional_spaces, exactly_char<'>'> >(src);
     }
     const char* ancestor_of(const char* src) {
-      return sequence< spaces, negate< exactly<'{'> > >(src);
+      return sequence< spaces, negate< exactly_char<'{'> > >(src);
     }
     
     // Match SCSS variable names.
     const char* variable(const char* src) {
-      return sequence<exactly<'$'>, name>(src);
+      return sequence<exactly_char<'$'>, name>(src);
     }
     
     // Match Sass boolean keywords.
@@ -382,7 +382,7 @@ namespace Sass {
     // Path matching functions.
     const char* folder(const char* src) {
       return sequence< zero_plus< any_char_except<'/'> >,
-                       exactly<'/'> >(src);
+                       exactly_char<'/'> >(src);
     }
     const char* folders(const char* src) {
       return zero_plus< folder >(src);
